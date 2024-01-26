@@ -60,12 +60,24 @@ export default function ProductList() {
   const dispatch = useDispatch()
   const products = useSelector(selectAllProducts)
   const [filter, setFilter] = useState({})
+  const [sort, setSort] = useState({})
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
 
   const handleFilter = (e, section, option) => {
-    const newFilter = { ...filter, [section.id]: option.value }
+    const newFilter = { ...filter }
+    //TODO: in server we will support multiple categories
+    if (e.target.checked) {
+      if (newFilter[section.id]) {
+        newFilter[section.id].push(option.value)
+      } else {
+        newFilter[section.id] = [option.value]
+      }
+    } else {
+      const index = newFilter[section.id].findIndex((el) => el === option.value)
+      newFilter[section.id].splice(index, 1)
+    }
+    console.log("🚀 ~ handleFilter ~ newFilter:", { newFilter })
 
-    dispatch(fetchProductsByFiltersAsync(newFilter))
     setFilter(newFilter)
 
     // console.log("🚀 ~ handleFilter ~ section:", section.id)
@@ -73,14 +85,14 @@ export default function ProductList() {
   }
 
   const handleSort = (e, option) => {
-    const newFilter = { ...filter, _sort: option.sort, _order: option.order }
-    setFilter(newFilter)
-    dispatch(fetchProductsByFiltersAsync(newFilter))
+    const sort = { ...filter, _sort: option.sort, _order: option.order }
+    console.log("🚀 ~ handleSort ~ sort:", { sort })
+    setSort(sort)
   }
 
   useEffect(() => {
-    dispatch(fetchAllProductsAsync())
-  }, [dispatch])
+    dispatch(fetchProductsByFiltersAsync({ filter, sort }))
+  }, [dispatch, filter, sort])
 
   return (
     <div className="bg-white">
@@ -168,11 +180,10 @@ export default function ProductList() {
 
             <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4">
               <DesktopFilter handleFilter={handleFilter}></DesktopFilter>
-              {/* Product grid */}
+
               <div className="lg:col-span-3">
                 <ProductGrid products={products}></ProductGrid>
               </div>
-              {/* Product grid end */}
             </div>
           </section>
 
