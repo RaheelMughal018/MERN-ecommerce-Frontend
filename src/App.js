@@ -4,7 +4,6 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
 
-
 import {
   createBrowserRouter,
   RouterProvider,
