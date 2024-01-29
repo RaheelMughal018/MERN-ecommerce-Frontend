@@ -4,7 +4,10 @@ import {
   fetchProductsByFilters,
   fetchBrands,
   fetchCategories,
+<<<<<<< HEAD
   fetchProductById,
+=======
+>>>>>>> 3dd578de484318ed008238886771eaebb1a877bb
 } from "./productAPI";
 
 const initialState = {
@@ -13,7 +16,10 @@ const initialState = {
   brands: [],
   status: "idle",
   totalItems: 0,
+<<<<<<< HEAD
   selectedProduct:null
+=======
+>>>>>>> 3dd578de484318ed008238886771eaebb1a877bb
 };
 
 export const fetchAllProductsAsync = createAsyncThunk(
@@ -24,6 +30,7 @@ export const fetchAllProductsAsync = createAsyncThunk(
     return response.data;
   }
 );
+<<<<<<< HEAD
 export const fetchProductByIdAsync = createAsyncThunk(
   "product/fetchProductById",
   async (id) => {
@@ -32,6 +39,8 @@ export const fetchProductByIdAsync = createAsyncThunk(
     return response.data;
   }
 );
+=======
+>>>>>>> 3dd578de484318ed008238886771eaebb1a877bb
 export const fetchProductsByFiltersAsync = createAsyncThunk(
   "product/fetchProductsByFilters",
   async ({ filter, sort, pagination }) => {
@@ -95,6 +104,7 @@ export const productSlice = createSlice({
       .addCase(fetchCategoriesAsync.fulfilled, (state, action) => {
         state.status = "idle";
         state.categories = action.payload;
+<<<<<<< HEAD
       })
       .addCase(fetchProductByIdAsync.pending, (state) => {
         state.status = "loading";
@@ -103,6 +113,9 @@ export const productSlice = createSlice({
         state.status = "idle";
         state.selectedProduct = action.payload;
       })
+=======
+      });
+>>>>>>> 3dd578de484318ed008238886771eaebb1a877bb
   },
 });
 
@@ -112,6 +125,9 @@ export const selectAllProducts = (state) => state.product.products;
 export const selectTotalItems = (state) => state.product.totalItems;
 export const selectBrands = (state) => state.product.brands;
 export const selectCategories = (state) => state.product.categories;
+<<<<<<< HEAD
 export const selectProductById = (state) => state.product.selectedProduct;
+=======
+>>>>>>> 3dd578de484318ed008238886771eaebb1a877bb
 
 export default productSlice.reducer;

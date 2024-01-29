@@ -6,6 +6,7 @@ export function fetchAllProducts() {
     resolve({ data });
   });
 }
+<<<<<<< HEAD
 export function fetchProductById(id) {
   return new Promise(async (resolve) => {
     //TODO: we will not hard-code server URL here
@@ -14,6 +15,8 @@ export function fetchProductById(id) {
     resolve({ data });
   });
 }
+=======
+>>>>>>> 3dd578de484318ed008238886771eaebb1a877bb
 
 export function fetchProductsByFilters(filter, sort, pagination) {
   // filter = {"category":["smartphone","laptops"]}
