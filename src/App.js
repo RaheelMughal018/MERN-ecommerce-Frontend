@@ -3,6 +3,7 @@ import './App.css';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
+import Protected from './features/auth/components/Protected';
 
 import {
   createBrowserRouter,
@@ -24,20 +25,20 @@ const router = createBrowserRouter([
     element: <LoginPage></LoginPage>,
   },
   {
-    path: '/signup',
+    path: '/sign-up',
     element: <SignupPage></SignupPage>,
   },
   { 
     path: '/cart',
-    element: <CartPage></CartPage>,
+    element: <Protected> <CartPage></CartPage> </Protected>
   },
   { 
     path: '/checkout',
-    element: <CheckoutPage></CheckoutPage>,
+    element: <Protected><CheckoutPage></CheckoutPage> </Protected>
   },
   { 
     path: '/product-detail/:id',
-    element: <ProductDetailPage></ProductDetailPage>,
+    element: <Protected> <ProductDetailPage></ProductDetailPage> </Protected>
   },
 ]);
 
