@@ -28,6 +28,7 @@ export function checkUser(loginInfo) {
     } else {
       reject({ message: 'user not found' });
     }
+    
     // TODO: on server it will only return some info of user (not password)
   });
 }

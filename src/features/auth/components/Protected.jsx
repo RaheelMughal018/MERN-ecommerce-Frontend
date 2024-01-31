@@ -6,7 +6,7 @@ import { Navigate } from 'react-router-dom'
 export default function Protected({children}) {
     const user = useSelector(selectLoggedInUser)
     if(!user){
-        return <Navigate to={"/login"}/>
+        return <Navigate replace={true} to={"/login"}/>
     }
     return children
  

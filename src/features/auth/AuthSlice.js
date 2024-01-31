@@ -56,9 +56,8 @@ export const counterSlice = createSlice({
   },
 });
 
-export const selectLoggedInUser = (state)=>state.loggedInUser;
-export const selectError = (state)=>state.error;
-
+export const selectLoggedInUser = (state)=>state.user.loggedInUser;
+export const selectError = (state)=>state.user.error;
 
 export const { increment } = counterSlice.actions;
 
