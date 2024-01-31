@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 export default function Login() {
   const dispatch = useDispatch();
   const error = useSelector(selectError)
-  console.log("🚀 ~ Login ~ error:", error)
+  // console.log("🚀 ~ Login ~ error:", error)
   const user = useSelector(selectLoggedInUser)
   const {
     register,
@@ -16,7 +16,7 @@ export default function Login() {
     formState: { errors },
   } = useForm();
   
-  console.log("🚀 ~ Login ~ user:", user)
+  // console.log("🚀 ~ Login ~ user:", user)
   // console.log(errors);
 
   return (

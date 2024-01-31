@@ -9,14 +9,31 @@ export function fetchAllProducts() {
 }
 
 export function fetchProductById(id) {
-  return new Promise(async (resolve) =>{
-    //TODO: we will not hard-code server URL here
-    const response = await fetch('http://localhost:8080/products/'+id) 
-    const data = await response.json()
-    resolve({data})
-  }
-  );
+  return new Promise(async (resolve, reject) => {
+    try {
+      const response = await fetch(`http://localhost:8080/products/${id}`);
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          // Handle 404 error
+          reject(new Error("Product not found"));
+        } else {
+          // Handle other HTTP errors
+          reject(new Error(`HTTP error! Status: ${response.status}`));
+        }
+        return;
+      }
+
+      const data = await response.json();
+      console.log("🚀  fetchProductById > data:", data);
+      resolve({ data });
+    } catch (error) {
+      console.error("Error fetching product:", error);
+      reject(error);
+    }
+  });
 }
+
 
 export function fetchProductsByFilters(filter,sort,pagination) {
   // filter = {"category":["smartphone","laptops"]}

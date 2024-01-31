@@ -1,4 +1,5 @@
-import { Counter } from './features/counter/Counter';
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import './App.css';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
@@ -15,6 +16,9 @@ import Cart from './features/cart/Cart';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import ProductDetailPage from './pages/ProductDetailPage';
+import { useEffect } from 'react';
+import { selectLoggedInUser } from './features/auth/AuthSlice';
+import { fetchItemsByUserIdAsync } from './features/cart/cartSlice';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -43,6 +47,15 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
+const dispatch = useDispatch();
+  const user = useSelector(selectLoggedInUser)
+  console.log("🚀 ~ App ~ user:", user)
+  useEffect(()=>{
+    if (user) {
+      dispatch(fetchItemsByUserIdAsync(user.id))
+    }
+    
+  },[dispatch,user])
   return (
     <div className="App">
       <RouterProvider router={router} />
