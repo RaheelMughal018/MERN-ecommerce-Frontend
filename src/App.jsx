@@ -49,7 +49,7 @@ const router = createBrowserRouter([
 function App() {
 const dispatch = useDispatch();
   const user = useSelector(selectLoggedInUser)
-  console.log("🚀 ~ App ~ user:", user)
+  // console.log("🚀 ~ App ~ user:", user)
   useEffect(()=>{
     if (user) {
       dispatch(fetchItemsByUserIdAsync(user.id))
