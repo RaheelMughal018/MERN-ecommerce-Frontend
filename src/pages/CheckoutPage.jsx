@@ -7,19 +7,26 @@ import {
   updateCartAsync,
 } from "../features/cart/cartSlice";
 import { useForm } from "react-hook-form";
-import { checkUserAsync, selectLoggedInUser, updateUserAsync } from "../features/auth/AuthSlice";
-
+import {
+  checkUserAsync,
+  selectLoggedInUser,
+  updateUserAsync,
+} from "../features/auth/AuthSlice";
+import { createOrderAsync } from "../features/order/orderSlice";
 
 function Checkout() {
+  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [paymentMethod, setPaymentMethod] = useState("cash");
   const dispatch = useDispatch();
   const [open, setOpen] = useState(true);
   const items = useSelector(selectCart);
-  const user = useSelector(selectLoggedInUser)
-  console.log("🚀 ~ Checkout ~ user:", user)
-  
+  const user = useSelector(selectLoggedInUser);
+  // console.log("🚀 ~ Checkout ~ user:", user)
+
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm();
   const totalAmount = items.reduce(
@@ -36,6 +43,31 @@ function Checkout() {
   const removeCartItem = (e, id) => {
     dispatch(deleteItemInCartAsync(id));
   };
+
+  const handleAddress = (e) => {
+    // console.log(e.target.value)
+    setSelectedAddress(user.addresses[e.target.value]);
+  };
+  const handlePayment = (e) => {
+    console.log(e.target.value);
+    setPaymentMethod(e.target.value);
+  };
+
+  const handleOrder = () => {
+    const order = {
+      items,
+      totalAmount,
+      totalItems,
+      user,
+      paymentMethod,
+      selectedAddress,
+    };
+    dispatch(createOrderAsync(order));
+    // TODO: when order successfully added redirect to order-success page
+    // TODO: clear cart after order
+    // TODO: on server udate the stock after order placement
+  };
+
   return (
     <>
       {!items.length && <Navigate to={"/"} replace={true} />}
@@ -43,17 +75,27 @@ function Checkout() {
         <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-5">
           {/* Form Section  */}
           <div className="lg:col-span-3">
-            <form className="bg-white px-5 py-12 mt-12" noValidate onSubmit={handleSubmit((data) => {
-              console.log("🚀 ~ <formclassName=handleSubmit ~ data:", data)
-              dispatch(updateUserAsync({...user,addresses:[...user.addresses,data]}))
-            })}>
+            <form
+              className="bg-white px-5 py-12 mt-12"
+              noValidate
+              onSubmit={handleSubmit((data) => {
+                console.log("🚀 ~ <formclassName=handleSubmit ~ data:", data);
+                dispatch(
+                  updateUserAsync({
+                    ...user,
+                    addresses: [...user.addresses, data],
+                  })
+                );
+                reset();
+              })}
+            >
               <div className="space-y-12">
                 <div className="border-b border-gray-900/10 pb-12">
                   <h2 className="text-2xl font-semibold leading-7 text-gray-900">
                     Personal Information
                   </h2>
                   <p className="mt-1 text-sm leading-6 text-gray-600">
-                    Use a permanent    where you can receive mail.
+                    Use a permanent where you can receive mail.
                   </p>
 
                   <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -62,12 +104,14 @@ function Checkout() {
                         htmlFor="name"
                         className="block text-sm font-medium leading-6 text-gray-900"
                       >
-                       Full Name
+                        Full Name
                       </label>
                       <div className="mt-2">
                         <input
                           type="text"
-                          {...register('name',{required:"name is required"})}
+                          {...register("name", {
+                            required: "name is required",
+                          })}
                           id="name"
                           autoComplete="given-name"
                           className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -85,7 +129,9 @@ function Checkout() {
                       <div className="mt-2">
                         <input
                           id="email"
-                          {...register('email',{required:"email is required"})}
+                          {...register("email", {
+                            required: "email is required",
+                          })}
                           type="email"
                           autoComplete="email"
                           className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -103,7 +149,9 @@ function Checkout() {
                       <div className="mt-2">
                         <select
                           id="country"
-                          {...register('country',{required:"country is required"})}
+                          {...register("country", {
+                            required: "country is required",
+                          })}
                           className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                         >
                           <option>United States</option>
@@ -126,7 +174,9 @@ function Checkout() {
                       <div className="mt-2">
                         <input
                           type="text"
-                          {...register('street',{required:"street is required"})}
+                          {...register("street", {
+                            required: "street is required",
+                          })}
                           id="street"
                           className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         />
@@ -143,7 +193,9 @@ function Checkout() {
                       <div className="mt-2">
                         <input
                           type="text"
-                          {...register('city',{required:"city is required"})}
+                          {...register("city", {
+                            required: "city is required",
+                          })}
                           id="city"
                           autoComplete="address-level2"
                           className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -161,7 +213,9 @@ function Checkout() {
                       <div className="mt-2">
                         <input
                           type="text"
-                          {...register('state',{required:"state is required"})}
+                          {...register("state", {
+                            required: "state is required",
+                          })}
                           id="region"
                           autoComplete="address-level1"
                           className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -179,7 +233,9 @@ function Checkout() {
                       <div className="mt-2">
                         <input
                           type="tel"
-                          {...register('phone',{required:"phoneNo is required"})}
+                          {...register("phone", {
+                            required: "phoneNo is required",
+                          })}
                           id="phone"
                           autoComplete="phone"
                           className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -196,7 +252,9 @@ function Checkout() {
                       <div className="mt-2">
                         <input
                           type="text"
-                          {...register('pinCode',{required:"pinCode is required"})}
+                          {...register("pinCode", {
+                            required: "pinCode is required",
+                          })}
                           id="pinCode"
                           autoComplete="pinCode"
                           className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -229,15 +287,17 @@ function Checkout() {
                     Choose from Existing addresses
                   </p>
                   <ul role="list">
-                    {user.addresses.map((user) => (
+                    {user.addresses.map((user, index) => (
                       <li
-                        key={user.email}
+                        key={index}
                         className="flex justify-between gap-x-6 px-5 py-5 border-solid border-2 border-gray-200"
                       >
                         <div className="flex gap-x-4">
                           <input
                             name="address"
                             type="radio"
+                            value={index}
+                            onChange={handleAddress}
                             className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
                           />
                           <div className="min-w-0 flex-auto">
@@ -276,7 +336,10 @@ function Checkout() {
                         <div className="flex items-center gap-x-3">
                           <input
                             id="cash"
+                            onChange={handlePayment}
+                            value={"cash"}
                             name="payments"
+                            checked={paymentMethod === "cash"}
                             type="radio"
                             className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
                           />
@@ -291,6 +354,9 @@ function Checkout() {
                           <input
                             id="card"
                             name="payments"
+                            onChange={handlePayment}
+                            value={"card"}
+                            checked={paymentMethod === "card"}
                             type="radio"
                             className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
                           />
@@ -388,12 +454,12 @@ function Checkout() {
                   Shipping and taxes calculated at checkout.
                 </p>
                 <div className="mt-6">
-                  <Link
-                    to={"/checkout"}
-                    className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
+                  <div
+                    onClick={handleOrder}
+                    className="flex items-center cursor-pointer justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
                   >
-                    Checkout
-                  </Link>
+                    Order Now
+                  </div>
                 </div>
                 <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
                   <p>
