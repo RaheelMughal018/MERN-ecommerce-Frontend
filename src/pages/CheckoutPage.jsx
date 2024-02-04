@@ -12,7 +12,7 @@ import {
   selectLoggedInUser,
   updateUserAsync,
 } from "../features/auth/AuthSlice";
-import { createOrderAsync } from "../features/order/orderSlice";
+import { createOrderAsync, selectCurrOrder } from "../features/order/orderSlice";
 
 function Checkout() {
   const [selectedAddress, setSelectedAddress] = useState(null);
@@ -21,6 +21,7 @@ function Checkout() {
   const [open, setOpen] = useState(true);
   const items = useSelector(selectCart);
   const user = useSelector(selectLoggedInUser);
+  const currOrder = useSelector(selectCurrOrder);
   // console.log("🚀 ~ Checkout ~ user:", user)
 
   const {
@@ -61,6 +62,7 @@ function Checkout() {
       user,
       paymentMethod,
       selectedAddress,
+      status: "pending" // ? other status can be shipped or delivered
     };
     dispatch(createOrderAsync(order));
     // TODO: when order successfully added redirect to order-success page
@@ -71,6 +73,7 @@ function Checkout() {
   return (
     <>
       {!items.length && <Navigate to={"/"} replace={true} />}
+      {currOrder && <Navigate to={`/order-success/${currOrder.id}`} replace={true} />}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-5">
           {/* Form Section  */}

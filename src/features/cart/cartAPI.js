@@ -50,3 +50,19 @@ export function fetchItemsByUserId(userId) {
     })
   }
 
+// Reset Cart after order placed
+
+  export function resetCart(userId){
+    // * first get all items from user 's cart, then remove each one by one.
+   return new Promise(async(resolve)=>{
+    const response = await fetchItemsByUserId(userId);
+    const items = response.data;
+    // console.log("🚀 ~ resetCart ~ items:", items)
+   
+    for (let item of items) {
+      await deleteItemInCart(item.id)
+    }
+    resolve({status:"success"})
+   })
+  }
+

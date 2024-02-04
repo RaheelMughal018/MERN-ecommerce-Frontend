@@ -5,6 +5,7 @@ const initialState = {
   value: 0,
   status: 'idle',
   orders:[],
+  currOrder:null,
 };
 
 export const createOrderAsync = createAsyncThunk(
@@ -20,9 +21,10 @@ export const orderSlice = createSlice({
   name: 'order',
   initialState,
   reducers: {
-    increment: (state) => {
-      state.value += 1;
+    resetOrder: (state) => {
+      state.currOrder = null;
     },
+    
   },
   extraReducers: (builder) => {
     builder
@@ -32,12 +34,13 @@ export const orderSlice = createSlice({
       .addCase(createOrderAsync.fulfilled, (state, action) => {
         state.status = 'idle';
         state.orders.push(action.payload);
+        state.currOrder = action.payload
       });
   },
 });
 
-export const { increment } = orderSlice.actions;
+export const { resetOrder } = orderSlice.actions;
 
-// export const selectOrder = (state) => state.order.orders;
+export const selectCurrOrder = (state) => state.order.currOrder;
 
 export default orderSlice.reducer;
