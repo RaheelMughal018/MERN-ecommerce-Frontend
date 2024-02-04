@@ -9,8 +9,7 @@ import Protected from './features/auth/components/Protected';
 import {
   createBrowserRouter,
   RouterProvider,
-  Route,
-  Link,
+  
 } from 'react-router-dom';
 import Cart from './features/cart/Cart';
 import CartPage from './pages/CartPage';
@@ -22,6 +21,7 @@ import { fetchItemsByUserIdAsync } from './features/cart/cartSlice';
 import ErrorPage from './pages/ErrorPage';
 import OrderSuccessPage from './pages/OrderSuccessPage';
 import UserOrderPage from './pages/UserOrderPage';
+import UserProfilePage from './pages/UserProfilePage';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -54,6 +54,11 @@ const router = createBrowserRouter([
   { 
     path: '/orders',
     element: <Protected><UserOrderPage/></Protected>
+    
+  },
+  { 
+    path: '/profile',
+    element: <Protected><UserProfilePage/></Protected>
     
   },
   { 
