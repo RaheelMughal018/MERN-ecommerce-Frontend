@@ -2463,7 +2463,16 @@
           "city": "Lahore",
           "state": "Punjab",
           "phone": "03044498883",
-          "pinCode": "53700"
+          "pinCode": "53701"
+        },
+        {
+          "name": "Raheel",
+          "email": "raheelmughal018@gmail.com",
+          "city": "Lahore",
+          "state": "Punjab",
+          "pinCode": "53703",
+          "phone": "03044498883",
+          "street": "Bhobatian Raiwind Road Lahore"
         }
       ]
     }

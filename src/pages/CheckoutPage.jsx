@@ -8,11 +8,10 @@ import {
 } from "../features/cart/cartSlice";
 import { useForm } from "react-hook-form";
 import {
-  checkUserAsync,
-  selectLoggedInUser,
   updateUserAsync,
 } from "../features/auth/AuthSlice";
 import { createOrderAsync, selectCurrOrder } from "../features/order/orderSlice";
+import { selectUserInfo } from "../features/user/userSlice";
 
 function Checkout() {
   const [selectedAddress, setSelectedAddress] = useState(null);
@@ -20,8 +19,8 @@ function Checkout() {
   const dispatch = useDispatch();
   const [open, setOpen] = useState(true);
   const items = useSelector(selectCart);
-  const user = useSelector(selectLoggedInUser);
-  const currOrder = useSelector(selectCurrOrder);
+  const user = useSelector(selectUserInfo);
+  const currentOrder = useSelector(selectCurrOrder);
   // console.log("🚀 ~ Checkout ~ user:", user)
 
   const {
@@ -41,7 +40,7 @@ function Checkout() {
     dispatch(updateCartAsync({ ...item, quantity }));
   };
 
-  const removeCartItem = (e, id) => {
+  const handleRemove = (e, id) => {
     dispatch(deleteItemInCartAsync(id));
   };
 
@@ -72,17 +71,17 @@ function Checkout() {
 
   return (
     <>
-      {!items.length && <Navigate to={"/"} replace={true} />}
-      {currOrder && <Navigate to={`/order-success/${currOrder.id}`} replace={true} />}
+      {!items.length && <Navigate to="/" replace={true}></Navigate>}
+      {currentOrder && <Navigate to={`/order-success/${currentOrder.id}`} replace={true}></Navigate>}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-5">
-          {/* Form Section  */}
           <div className="lg:col-span-3">
+            {/* This form is for address */}
             <form
               className="bg-white px-5 py-12 mt-12"
               noValidate
               onSubmit={handleSubmit((data) => {
-                console.log("🚀 ~ <formclassName=handleSubmit ~ data:", data);
+                console.log(data);
                 dispatch(
                   updateUserAsync({
                     ...user,
@@ -98,7 +97,7 @@ function Checkout() {
                     Personal Information
                   </h2>
                   <p className="mt-1 text-sm leading-6 text-gray-600">
-                    Use a permanent where you can receive mail.
+                    Use a permanent address where you can receive mail.
                   </p>
 
                   <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -107,18 +106,20 @@ function Checkout() {
                         htmlFor="name"
                         className="block text-sm font-medium leading-6 text-gray-900"
                       >
-                        Full Name
+                        Full name
                       </label>
                       <div className="mt-2">
                         <input
                           type="text"
-                          {...register("name", {
-                            required: "name is required",
+                          {...register('name', {
+                            required: 'name is required',
                           })}
                           id="name"
-                          autoComplete="given-name"
                           className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         />
+                        {errors.name && (
+                          <p className="text-red-500">{errors.name.message}</p>
+                        )}
                       </div>
                     </div>
 
@@ -132,38 +133,37 @@ function Checkout() {
                       <div className="mt-2">
                         <input
                           id="email"
-                          {...register("email", {
-                            required: "email is required",
+                          {...register('email', {
+                            required: 'email is required',
                           })}
                           type="email"
-                          autoComplete="email"
                           className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         />
+                        {errors.email && (
+                          <p className="text-red-500">{errors.email.message}</p>
+                        )}
                       </div>
                     </div>
 
                     <div className="sm:col-span-3">
                       <label
-                        htmlFor="country"
+                        htmlFor="phone"
                         className="block text-sm font-medium leading-6 text-gray-900"
                       >
-                        Country
+                        Phone
                       </label>
                       <div className="mt-2">
-                        <select
-                          id="country"
-                          {...register("country", {
-                            required: "country is required",
+                        <input
+                          id="phone"
+                          {...register('phone', {
+                            required: 'phone is required',
                           })}
-                          className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                        >
-                          <option>United States</option>
-                          <option>Canada</option>
-                          <option>Mexico</option>
-                          <option>Pakistan</option>
-                          <option>India</option>
-                          <option>Australia</option>
-                        </select>
+                          type="tel"
+                          className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        />
+                        {errors.phone && (
+                          <p className="text-red-500">{errors.phone.message}</p>
+                        )}
                       </div>
                     </div>
 
@@ -177,12 +177,17 @@ function Checkout() {
                       <div className="mt-2">
                         <input
                           type="text"
-                          {...register("street", {
-                            required: "street is required",
+                          {...register('street', {
+                            required: 'street is required',
                           })}
                           id="street"
                           className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         />
+                        {errors.street && (
+                          <p className="text-red-500">
+                            {errors.street.message}
+                          </p>
+                        )}
                       </div>
                     </div>
 
@@ -196,19 +201,22 @@ function Checkout() {
                       <div className="mt-2">
                         <input
                           type="text"
-                          {...register("city", {
-                            required: "city is required",
+                          {...register('city', {
+                            required: 'city is required',
                           })}
                           id="city"
                           autoComplete="address-level2"
                           className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         />
+                        {errors.city && (
+                          <p className="text-red-500">{errors.city.message}</p>
+                        )}
                       </div>
                     </div>
 
                     <div className="sm:col-span-2">
                       <label
-                        htmlFor="region"
+                        htmlFor="state"
                         className="block text-sm font-medium leading-6 text-gray-900"
                       >
                         State / Province
@@ -216,38 +224,22 @@ function Checkout() {
                       <div className="mt-2">
                         <input
                           type="text"
-                          {...register("state", {
-                            required: "state is required",
+                          {...register('state', {
+                            required: 'state is required',
                           })}
-                          id="region"
+                          id="state"
                           autoComplete="address-level1"
                           className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         />
+                        {errors.state && (
+                          <p className="text-red-500">{errors.state.message}</p>
+                        )}
                       </div>
                     </div>
 
                     <div className="sm:col-span-2">
                       <label
-                        htmlFor="postal-code"
-                        className="block text-sm font-medium leading-6 text-gray-900"
-                      >
-                        Phone No
-                      </label>
-                      <div className="mt-2">
-                        <input
-                          type="tel"
-                          {...register("phone", {
-                            required: "phoneNo is required",
-                          })}
-                          id="phone"
-                          autoComplete="phone"
-                          className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        />
-                      </div>
-                    </div>
-                    <div className="sm:col-span-2">
-                      <label
-                        htmlFor="postal-code"
+                        htmlFor="pinCode"
                         className="block text-sm font-medium leading-6 text-gray-900"
                       >
                         ZIP / Postal code
@@ -255,13 +247,17 @@ function Checkout() {
                       <div className="mt-2">
                         <input
                           type="text"
-                          {...register("pinCode", {
-                            required: "pinCode is required",
+                          {...register('pinCode', {
+                            required: 'pinCode is required',
                           })}
                           id="pinCode"
-                          autoComplete="pinCode"
                           className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         />
+                        {errors.pinCode && (
+                          <p className="text-red-500">
+                            {errors.pinCode.message}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -269,6 +265,7 @@ function Checkout() {
 
                 <div className="mt-6 flex items-center justify-end gap-x-6">
                   <button
+                    // onClick={e=>reset()}
                     type="button"
                     className="text-sm font-semibold leading-6 text-gray-900"
                   >
@@ -281,106 +278,104 @@ function Checkout() {
                     Add Address
                   </button>
                 </div>
-
-                <div className="border-b border-gray-900/10 pb-12">
-                  <h2 className="text-base font-semibold leading-7 text-gray-900">
-                    Addresses
-                  </h2>
-                  <p className="mt-1 text-sm leading-6 text-gray-600">
-                    Choose from Existing addresses
-                  </p>
-                  <ul role="list">
-                    {user.addresses.map((user, index) => (
-                      <li
-                        key={index}
-                        className="flex justify-between gap-x-6 px-5 py-5 border-solid border-2 border-gray-200"
-                      >
-                        <div className="flex gap-x-4">
-                          <input
-                            name="address"
-                            type="radio"
-                            value={index}
-                            onChange={handleAddress}
-                            className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                          />
-                          <div className="min-w-0 flex-auto">
-                            <p className="text-sm font-semibold leading-6 text-gray-900">
-                              {user.name}
-                            </p>
-                            <p className="mt-1 truncate text-xs leading-5 text-gray-500">
-                              {user.street}
-                            </p>
-                            <p className="mt-1 truncate text-xs leading-5 text-gray-500">
-                              {user.pinCode}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="hidden sm:flex sm:flex-col sm:items-end">
-                          <p className="text-sm leading-6 text-gray-900">
-                            Phone: {user.phone}
-                          </p>
-                          <p className="text-sm leading-6 text-gray-500">
-                            {user.city}
-                          </p>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <div className="mt-10 space-y-10">
-                    <fieldset>
-                      <legend className="text-sm font-semibold leading-6 text-gray-900">
-                        Payment Methods
-                      </legend>
-                      <p className="mt-1 text-sm leading-6 text-gray-600">
-                        Choose One
-                      </p>
-                      <div className="mt-6 space-y-6">
-                        <div className="flex items-center gap-x-3">
-                          <input
-                            id="cash"
-                            onChange={handlePayment}
-                            value={"cash"}
-                            name="payments"
-                            checked={paymentMethod === "cash"}
-                            type="radio"
-                            className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                          />
-                          <label
-                            htmlFor="cash"
-                            className="block text-sm font-medium leading-6 text-gray-900"
-                          >
-                            Cash
-                          </label>
-                        </div>
-                        <div className="flex items-center gap-x-3">
-                          <input
-                            id="card"
-                            name="payments"
-                            onChange={handlePayment}
-                            value={"card"}
-                            checked={paymentMethod === "card"}
-                            type="radio"
-                            className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                          />
-                          <label
-                            htmlFor="card"
-                            className="block text-sm font-medium leading-6 text-gray-900"
-                          >
-                            Card Payment
-                          </label>
-                        </div>
-                      </div>
-                    </fieldset>
-                  </div>
-                </div>
               </div>
             </form>
+            <div className="border-b border-gray-900/10 pb-12">
+              <h2 className="text-base font-semibold leading-7 text-gray-900">
+                Addresses
+              </h2>
+              <p className="mt-1 text-sm leading-6 text-gray-600">
+                Choose from Existing addresses
+              </p>
+              <ul role="list">
+                {user.addresses.map((address, index) => (
+                  <li
+                    key={index}
+                    className="flex justify-between gap-x-6 px-5 py-5 border-solid border-2 border-gray-200"
+                  >
+                    <div className="flex gap-x-4">
+                      <input
+                        onChange={handleAddress}
+                        name="address"
+                        type="radio"
+                        value={index}
+                        className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                      />
+                      <div className="min-w-0 flex-auto">
+                        <p className="text-sm font-semibold leading-6 text-gray-900">
+                          {address.name}
+                        </p>
+                        <p className="mt-1 truncate text-xs leading-5 text-gray-500">
+                          {address.street}
+                        </p>
+                        <p className="mt-1 truncate text-xs leading-5 text-gray-500">
+                          {address.pinCode}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="hidden sm:flex sm:flex-col sm:items-end">
+                      <p className="text-sm leading-6 text-gray-900">
+                        Phone: {address.phone}
+                      </p>
+                      <p className="text-sm leading-6 text-gray-500">
+                        {address.city}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="mt-10 space-y-10">
+                <fieldset>
+                  <legend className="text-sm font-semibold leading-6 text-gray-900">
+                    Payment Methods
+                  </legend>
+                  <p className="mt-1 text-sm leading-6 text-gray-600">
+                    Choose One
+                  </p>
+                  <div className="mt-6 space-y-6">
+                    <div className="flex items-center gap-x-3">
+                      <input
+                        id="cash"
+                        name="payments"
+                        onChange={handlePayment}
+                        value="cash"
+                        type="radio"
+                        checked={paymentMethod === 'cash'}
+                        className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                      />
+                      <label
+                        htmlFor="cash"
+                        className="block text-sm font-medium leading-6 text-gray-900"
+                      >
+                        Cash
+                      </label>
+                    </div>
+                    <div className="flex items-center gap-x-3">
+                      <input
+                        id="card"
+                        onChange={handlePayment}
+                        name="payments"
+                        checked={paymentMethod === 'card'}
+                        value="card"
+                        type="radio"
+                        className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                      />
+                      <label
+                        htmlFor="card"
+                        className="block text-sm font-medium leading-6 text-gray-900"
+                      >
+                        Card Payment
+                      </label>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+            </div>
           </div>
-          {/* Cart Section  */}
           <div className="lg:col-span-2">
-            <div className="mx-auto mt-12 bg-white max-w-7xl px-2  sm:px-2 lg:px-4">
-              <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
+            <div className="mx-auto mt-12 bg-white max-w-7xl px-2 sm:px-2 lg:px-4">
+              <div className="border-t border-gray-200 px-0 py-6 sm:px-0">
                 <h1 className="text-4xl my-5 font-bold tracking-tight text-gray-900">
                   Cart
                 </h1>
@@ -427,9 +422,10 @@ function Checkout() {
                                 <option value="5">5</option>
                               </select>
                             </div>
+
                             <div className="flex">
                               <button
-                                onClick={(e) => removeCartItem(e, item.id)}
+                                onClick={(e) => handleRemove(e, item.id)}
                                 type="button"
                                 className="font-medium text-indigo-600 hover:text-indigo-500"
                               >
@@ -444,22 +440,22 @@ function Checkout() {
                 </div>
               </div>
 
-              <div className="border-t border-gray-200 px-2 py-6 sm:px-4">
+              <div className="border-t border-gray-200 px-2 py-6 sm:px-2">
                 <div className="flex justify-between my-2 text-base font-medium text-gray-900">
                   <p>Subtotal</p>
                   <p>$ {totalAmount}</p>
                 </div>
                 <div className="flex justify-between my-2 text-base font-medium text-gray-900">
-                  <p>Total Items</p>
+                  <p>Total Items in Cart</p>
                   <p>{totalItems} items</p>
                 </div>
-                <p className="mt-0.5 text-sm  text-gray-500">
+                <p className="mt-0.5 text-sm text-gray-500">
                   Shipping and taxes calculated at checkout.
                 </p>
                 <div className="mt-6">
                   <div
                     onClick={handleOrder}
-                    className="flex items-center cursor-pointer justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
+                    className="flex cursor-pointer items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
                   >
                     Order Now
                   </div>
@@ -467,11 +463,10 @@ function Checkout() {
                 <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
                   <p>
                     or
-                    <Link to={"/"}>
+                    <Link to="/">
                       <button
                         type="button"
                         className="font-medium text-indigo-600 hover:text-indigo-500"
-                        onClick={() => setOpen(false)}
                       >
                         Continue Shopping
                         <span aria-hidden="true"> &rarr;</span>
