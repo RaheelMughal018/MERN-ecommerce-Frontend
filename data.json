@@ -2434,47 +2434,18 @@
   ],
   "users": [
     {
-      "id": "49fd",
-      "email": "Raheel@ai.com",
-      "addresses": [
-        {
-          "name": "Raheel",
-          "email": "raheelmughal018@gmail.com",
-          "country": "Pakistan",
-          "street": "Bhobatian Raiwind Road Lahore",
-          "city": "Lahore",
-          "state": "Punjab",
-          "phone": "03044498883",
-          "pinCode": "53700"
-        }
-      ],
-      "password": "Qwerty1$"
+      "id": "d7ca",
+      "email": "admin@gmail.com",
+      "password": "Qwerty1$",
+      "addresses": [],
+      "role": "admin"
     },
     {
-      "id": "2fbe",
+      "id": "8407",
       "email": "temp@gmail.com",
       "password": "Qwerty1$",
-      "addresses": [
-        {
-          "name": "Raheel",
-          "email": "raheelmughal018@gmail.com",
-          "country": "Pakistan",
-          "street": "Bhobatian Raiwind Road Lahore",
-          "city": "Lahore",
-          "state": "Punjab",
-          "phone": "03044498883",
-          "pinCode": "53701"
-        },
-        {
-          "name": "Raheel",
-          "email": "raheelmughal018@gmail.com",
-          "city": "Lahore",
-          "state": "Punjab",
-          "pinCode": "53703",
-          "phone": "03044498883",
-          "street": "Bhobatian Raiwind Road Lahore"
-        }
-      ]
+      "addresses": [],
+      "role": "user"
     }
   ],
   "cart": [

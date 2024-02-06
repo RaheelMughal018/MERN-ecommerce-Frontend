@@ -12,12 +12,12 @@ export default function Signup() {
     formState: { errors },
   } = useForm();
   const dispatch = useDispatch();
-  const user = useSelector(selectLoggedInUser)
+  const user = useSelector(selectLoggedInUser);
 
   console.log("🚀 ~ Signup ~ errors:", { errors });
   return (
     <>
-    {user?.email }
+      {user?.email}
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <img
@@ -31,11 +31,17 @@ export default function Signup() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form noValidate
+          <form
+            noValidate
             className="space-y-6"
             onSubmit={handleSubmit((data) => {
               dispatch(
-                createUserAsync({ email: data.email, password: data.password,addresses:[] })
+                createUserAsync({
+                  email: data.email,
+                  password: data.password,
+                  addresses: [],
+                  role: "user", // TODO: add roles to the backend and frontend
+                })
               );
               console.log("🚀 ~ Signup ~ data:", data);
             })}

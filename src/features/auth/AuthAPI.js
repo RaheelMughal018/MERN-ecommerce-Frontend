@@ -1,9 +1,9 @@
 export function createUser(userData) {
   return new Promise(async (resolve) => {
-    const response = await fetch("http://localhost:8080/users", {
-      method: "POST",
+    const response = await fetch('http://localhost:8080/users', {
+      method: 'POST',
       body: JSON.stringify(userData),
-      headers: { "content-type": "application/json" },
+      headers: { 'content-type': 'application/json' },
     });
     // TODO: on server we will only include relevant information
     const data = await response.json();
@@ -18,7 +18,7 @@ export function checkUser(loginInfo) {
     const response = await fetch('http://localhost:8080/users?email=' + email);
     const data = await response.json();
     // console.log("🚀 ~ returnnewPromise ~ data:", data)
-    
+
     if (data.length) {
       if (password === data[0].password) {
         resolve({ data: data[0] });
@@ -28,9 +28,14 @@ export function checkUser(loginInfo) {
     } else {
       reject({ message: 'user not found' });
     }
-    
+
     // TODO: on server it will only return some info of user (not password)
   });
 }
 
-
+export function signout(id) {
+  return new Promise(async (resolve) => {
+    // TODO: on server we will remove session info
+    resolve({ data: 'successufully signout' });
+  });
+}
