@@ -7,8 +7,9 @@ import {
   selectProductById,
 } from "../../product/productSlice";
 import { useParams } from "react-router-dom";
-import { selectLoggedInUser } from "../../auth/AuthSlice";
 import { addToCartAsync } from "../../cart/cartSlice";
+import { selectLoggedInUser } from "../../auth/AuthSlice";
+import { discountedPrice } from "../../../app/constants";
 
 // TODO: In server data we will add colors, sizes , highlights. to each product
 
@@ -44,33 +45,28 @@ function classNames(...classes) {
 export default function AdminProductDetail() {
   const [selectedColor, setSelectedColor] = useState(colors[0]);
   const [selectedSize, setSelectedSize] = useState(sizes[2]);
+  const user = useSelector(selectLoggedInUser);
   const product = useSelector(selectProductById);
   const dispatch = useDispatch();
-  const { id } = useParams();
-  const user = useSelector(selectLoggedInUser);
+  const params = useParams();
 
   const handleCart = (e) => {
     e.preventDefault();
     const newItem = { ...product, quantity: 1, user: user.id };
-    // console.log("🚀 ~ handleCart ~ newItem:", newItem)
     delete newItem["id"];
-    // console.log("🚀 ~ handleCart ~ updated newItem:",   newItem)
     dispatch(addToCartAsync(newItem));
   };
 
   useEffect(() => {
-    dispatch(fetchProductByIdAsync(id));
-  }, [dispatch, id]);
+    dispatch(fetchProductByIdAsync(params.id));
+  }, [dispatch, params.id]);
 
   return (
     <div className="bg-white">
       {product && (
         <div className="pt-6">
           <nav aria-label="Breadcrumb">
-            <ol
-              role="list"
-              className="mx-auto flex max-w-2xl items-center space-x-2 px-4 sm:px-6 lg:max-w-7xl lg:px-8"
-            >
+            <ol className="mx-auto flex max-w-2xl items-center space-x-2 px-4 sm:px-6 lg:max-w-7xl lg:px-8">
               {product.breadcrumbs &&
                 product.breadcrumbs.map((breadcrumb) => (
                   <li key={breadcrumb.id}>
@@ -151,8 +147,11 @@ export default function AdminProductDetail() {
             {/* Options */}
             <div className="mt-4 lg:row-span-3 lg:mt-0">
               <h2 className="sr-only">Product information</h2>
-              <p className="text-3xl tracking-tight text-gray-900">
+              <p className="text-xl line-through tracking-tight text-gray-900">
                 ${product.price}
+              </p>
+              <p className="text-3xl tracking-tight text-gray-900">
+                ${discountedPrice(product)}
               </p>
 
               {/* Reviews */}

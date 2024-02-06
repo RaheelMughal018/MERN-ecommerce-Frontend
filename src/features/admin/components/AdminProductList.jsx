@@ -24,7 +24,7 @@ import {
   PlusIcon,
   Squares2X2Icon,
 } from "@heroicons/react/20/solid";
-import { ITEMS_PER_PAGE } from "../../../app/constants";
+import { ITEMS_PER_PAGE, discountedPrice } from "../../../app/constants";
 
 const sortOptions = [
   { name: "Best Rating", sort: "rating", order: "desc", current: false },
@@ -60,7 +60,7 @@ export default function AdminProductList() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [page, setPage] = useState(1);
   const handleFilter = (e, section, option) => {
-    // console.log(e.target.checked);
+    console.log(e.target.checked);
     const newFilter = { ...filter };
     // TODO : on server it will support multiple categories
     if (e.target.checked) {
@@ -87,7 +87,7 @@ export default function AdminProductList() {
   };
 
   const handlePage = (page) => {
-    // console.log({ page });
+    console.log({ page });
     setPage(page);
   };
 
@@ -510,17 +510,14 @@ function ProductGrid({ products }) {
                     </div>
                     <div>
                       <p className="text-sm block font-medium text-gray-900">
-                        $
-                        {Math.round(
-                          product.price * (1 - product.discountPercentage / 100)
-                        )}
+                        ${discountedPrice(product)}
                       </p>
                       <p className="text-sm block line-through font-medium text-gray-400">
                         ${product.price}
                       </p>
                     </div>
                   </div>
-                  {product.delete && (
+                  {product.deleted && (
                     <div>
                       <p className="text-sm text-red-400">product deleted</p>
                     </div>

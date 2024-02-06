@@ -1,31 +1,30 @@
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
+import { Counter } from "./features/counter/Counter";
 import "./App.css";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
-import Protected from "./features/auth/components/Protected";
 
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Cart from "./features/cart/Cart";
+import { createBrowserRouter, Link, RouterProvider } from "react-router-dom";
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
+import Protected from "./features/auth/components/Protected";
 import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { selectLoggedInUser } from "./features/auth/AuthSlice";
 import { fetchItemsByUserIdAsync } from "./features/cart/cartSlice";
 import ErrorPage from "./pages/ErrorPage";
 import OrderSuccessPage from "./pages/OrderSuccessPage";
 import UserOrderPage from "./pages/UserOrderPage";
 import UserProfilePage from "./pages/UserProfilePage";
-import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import { fetchLoggedInUserAsync } from "./features/user/userSlice";
 import Logout from "./features/auth/components/Logout";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ProtectedAdmin from "./features/auth/components/ProtectedAdmin";
-import AdminHomePage from "../src/pages/AdminHomePage";
+import AdminHomePage from "./pages/AdminHomePage";
 import AdminProductDetailPage from "./pages/AdminProductDetailPage";
 import AdminProductFormPage from "./pages/AdminProductFormPage";
-
+import AdminOrdersPage from "./pages/AdminOrdersPage";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -35,7 +34,7 @@ const router = createBrowserRouter([
     path: "/admin",
     element: (
       <ProtectedAdmin>
-        <AdminHomePage />
+        <AdminHomePage></AdminHomePage>
       </ProtectedAdmin>
     ),
   },
@@ -44,15 +43,14 @@ const router = createBrowserRouter([
     element: <LoginPage></LoginPage>,
   },
   {
-    path: "/sign-up",
+    path: "/signup",
     element: <SignupPage></SignupPage>,
   },
   {
     path: "/cart",
     element: (
       <Protected>
-        {" "}
-        <CartPage></CartPage>{" "}
+        <CartPage></CartPage>
       </Protected>
     ),
   },
@@ -60,7 +58,7 @@ const router = createBrowserRouter([
     path: "/checkout",
     element: (
       <Protected>
-        <CheckoutPage></CheckoutPage>{" "}
+        <CheckoutPage></CheckoutPage>
       </Protected>
     ),
   },
@@ -68,7 +66,6 @@ const router = createBrowserRouter([
     path: "/product-detail/:id",
     element: (
       <Protected>
-        {" "}
         <ProductDetailPage></ProductDetailPage>
       </Protected>
     ),
@@ -77,47 +74,23 @@ const router = createBrowserRouter([
     path: "/admin/product-detail/:id",
     element: (
       <ProtectedAdmin>
-        <AdminProductDetailPage />
+        <AdminProductDetailPage></AdminProductDetailPage>
       </ProtectedAdmin>
     ),
-  },
-  {
-    path: "/order-success/:id",
-    element: (
-      <Protected>
-        <OrderSuccessPage />
-      </Protected>
-    ),
-  },
-  {
-    path: "/orders",
-    element: (
-      <Protected>
-        <UserOrderPage />
-      </Protected>
-    ),
-  },
-  {
-    path: "/profile",
-    element: (
-      <Protected>
-        <UserProfilePage />
-      </Protected>
-    ),
-  },
-  {
-    path: "/logout",
-    element: <Logout />,
-  },
-  {
-    path: "/forgot-password",
-    element: <ForgotPasswordPage></ForgotPasswordPage>,
   },
   {
     path: "/admin/product-form",
     element: (
       <ProtectedAdmin>
-        <AdminProductFormPage />
+        <AdminProductFormPage></AdminProductFormPage>
+      </ProtectedAdmin>
+    ),
+  },
+  {
+    path: "/admin/orders",
+    element: (
+      <ProtectedAdmin>
+        <AdminOrdersPage></AdminOrdersPage>
       </ProtectedAdmin>
     ),
   },
@@ -125,30 +98,54 @@ const router = createBrowserRouter([
     path: "/admin/product-form/edit/:id",
     element: (
       <ProtectedAdmin>
-        <AdminProductFormPage />
+        <AdminProductFormPage></AdminProductFormPage>
       </ProtectedAdmin>
     ),
   },
   {
+    path: "/order-success/:id",
+    element: <OrderSuccessPage></OrderSuccessPage>,
+  },
+  {
+    path: "/orders",
+    element: <UserOrderPage></UserOrderPage>,
+  },
+  {
+    path: "/profile",
+    element: <UserProfilePage></UserProfilePage>,
+  },
+  {
+    path: "/logout",
+    element: <Logout></Logout>,
+  },
+  {
+    path: "/forgot-password",
+    element: <ForgotPasswordPage></ForgotPasswordPage>,
+  },
+  {
     path: "*",
-    element: <ErrorPage />,
+    element: <ErrorPage></ErrorPage>,
   },
 ]);
 
 function App() {
   const dispatch = useDispatch();
   const user = useSelector(selectLoggedInUser);
-  // console.log("🚀 ~ App ~ user:", user)
+
   useEffect(() => {
     if (user) {
       dispatch(fetchItemsByUserIdAsync(user.id));
       dispatch(fetchLoggedInUserAsync(user.id));
     }
   }, [dispatch, user]);
+
   return (
-    <div className="App">
-      <RouterProvider router={router} />
-    </div>
+    <>
+      <div className="App">
+        <RouterProvider router={router} />
+        {/* Link must be inside the Provider */}
+      </div>
+    </>
   );
 }
 
