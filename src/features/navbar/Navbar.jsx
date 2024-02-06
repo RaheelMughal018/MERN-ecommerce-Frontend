@@ -29,7 +29,7 @@ function classNames(...classes) {
 function NavBar({ children }) {
   const items = useSelector(selectCart);
   const user = useSelector(selectLoggedInUser);
-  // console.log("🚀 ~ NavBar ~ user:", user);
+  console.log("🚀 ~ NavBar ~ user:", user);
   return (
     <>
       <div className="min-h-full">

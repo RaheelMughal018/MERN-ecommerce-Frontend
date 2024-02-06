@@ -1,21 +1,63 @@
 import { PhotoIcon, UserCircleIcon } from "@heroicons/react/24/solid";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  clearSelctedProduct,
   createProductAsync,
+  fetchProductByIdAsync,
   selectBrands,
   selectCategories,
+  selectProductById,
+  updateProductAsync,
 } from "../../product/productSlice";
 import { useForm } from "react-hook-form";
+import { useParams } from "react-router-dom";
+import { useEffect } from "react";
 
 export default function ProductForm() {
   const brands = useSelector(selectBrands);
   const categories = useSelector(selectCategories);
   const dispatch = useDispatch();
+  const { id } = useParams();
+  const selectedProduct = useSelector(selectProductById);
   const {
     register,
     handleSubmit,
+    setValue,
+    reset,
     formState: { errors },
   } = useForm();
+
+  useEffect(() => {
+    if (id) {
+      dispatch(fetchProductByIdAsync(id));
+    } else {
+      dispatch(clearSelctedProduct());
+    }
+  }, [dispatch, id]);
+
+  useEffect(() => {
+    if (selectedProduct && id) {
+      setValue("title", selectedProduct.title);
+      setValue("description", selectedProduct.description);
+      setValue("brand", selectedProduct.brand);
+      setValue("category", selectedProduct.category);
+      setValue("stock", selectedProduct.stock);
+      setValue("price", selectedProduct.price);
+      setValue("discountPercentage", selectedProduct.discountPercentage);
+      setValue("rating", selectedProduct.rating);
+      setValue("thumbnail", selectedProduct.thumbnail);
+      setValue("image1", selectedProduct.images[0]);
+      setValue("image2", selectedProduct.images[1]);
+      setValue("image3", selectedProduct.images[2]);
+    }
+  }, [selectedProduct, setValue, id]);
+
+  const handleDelete = () => {
+    const product = { ...selectedProduct };
+    product.delete = true;
+    dispatch(updateProductAsync(product));
+  };
+
   return (
     <form
       noValidate
@@ -30,9 +72,20 @@ export default function ProductForm() {
         delete product["image1"];
         delete product["image2"];
         delete product["image3"];
-        console.log(`data: `, product);
-        dispatch(createProductAsync(product));
-        console.log("Product created successfully");
+        product.rating = 0;
+        product.price = +product.price;
+        product.discountPercentage = +product.discountPercentage;
+        product.stock = +product.stock;
+
+        if (id) {
+          product.id = id;
+          product.rating = +selectedProduct.rating || 0;
+          dispatch(updateProductAsync(product));
+          reset();
+        } else {
+          dispatch(createProductAsync(product));
+          // TODO: clear the fileds after successfully created the products and show the message
+        }
       })}
     >
       <div className="space-y-12 bg-white p-12">
@@ -370,12 +423,14 @@ export default function ProductForm() {
           Cancel
         </button>
 
-        {/* {selectedProduct && <button
-          onClick={handleDelete}
-          className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-        >
-          Delete
-        </button>} */}
+        {selectedProduct && (
+          <button
+            onClick={handleDelete}
+            className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          >
+            Delete
+          </button>
+        )}
 
         <button
           type="submit"

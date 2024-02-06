@@ -24,10 +24,10 @@ export function fetchProductById(id) {
       }
 
       const data = await response.json();
-      console.log("🚀  fetchProductById > data:", data);
+      // console.log("🚀  fetchProductById > data:", data);
       resolve({ data });
     } catch (error) {
-      console.error("Error fetching product:", error);
+      // console.error("Error fetching product:", error);
       reject(error);
     }
   });
@@ -38,6 +38,8 @@ export function fetchProductsByFilters(filter, sort, pagination) {
   // sort = {_sort:"price",_order="desc"}
   // pagination = {_page:1,_limit=10}
   // TODO : on server we will support multi values in filter
+  // TODO: server will filter the deleted products
+
   let queryString = "";
   for (let key in filter) {
     const categoryValues = filter[key];
@@ -93,6 +95,22 @@ export function createProduct(product) {
       headers: { "content-type": "application/json" },
     });
 
+    const data = await response.json();
+    // console.log("🚀 ~ returnnewPromise ~ data:", data);
+    resolve({ data });
+  });
+}
+
+export function updateProduct(update) {
+  return new Promise(async (resolve) => {
+    const response = await fetch(
+      `http://localhost:8080/products/${update.id}`,
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(update),
+      }
+    );
     const data = await response.json();
     resolve({ data });
   });
