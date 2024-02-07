@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { checkUser, createUser, signout } from './AuthAPI';
+import { checkUser, createUser, signOut } from './authAPI';
 import { updateUser } from '../user/userAPI';
 
 const initialState = {
@@ -9,44 +9,45 @@ const initialState = {
 };
 
 export const createUserAsync = createAsyncThunk(
-  'auth/createUser',
+  'user/createUser',
   async (userData) => {
     const response = await createUser(userData);
     // The value we return becomes the `fulfilled` action payload
     return response.data;
-  },
-);
-
-export const checkUserAsync = createAsyncThunk(
-  'auth/checkUser',
-  async (loginInfo) => {
-    const response = await checkUser(loginInfo);
-    // The value we return becomes the `fulfilled` action payload
-    return response.data;
-  },
+  }
 );
 
 export const updateUserAsync = createAsyncThunk(
-  'auth/updateUser',
+  'user/updateUser',
   async (update) => {
     const response = await updateUser(update);
     // The value we return becomes the `fulfilled` action payload
     return response.data;
-  },
+  }
 );
-export const signoutAsync = createAsyncThunk('auth/signout', async (id) => {
-  const response = await signout(id);
-  // The value we return becomes the `fulfilled` action payload
-  return response.data;
-});
+
+export const checkUserAsync = createAsyncThunk(
+  'user/checkUser',
+  async (loginInfo) => {
+    const response = await checkUser(loginInfo);
+    // The value we return becomes the `fulfilled` action payload
+    return response.data;
+  }
+);
+
+export const signOutAsync = createAsyncThunk(
+  'user/signOut',
+  async (loginInfo) => {
+    const response = await signOut(loginInfo);
+    // The value we return becomes the `fulfilled` action payload
+    return response.data;
+  }
+);
 
 export const authSlice = createSlice({
-  name: 'auth',
+  name: 'user',
   initialState,
   reducers: {
-    increment: (state) => {
-      state.value += 1;
-    },
   },
   extraReducers: (builder) => {
     builder
@@ -75,10 +76,10 @@ export const authSlice = createSlice({
         state.status = 'idle';
         state.loggedInUser = action.payload;
       })
-      .addCase(signoutAsync.pending, (state) => {
+      .addCase(signOutAsync.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(signoutAsync.fulfilled, (state, action) => {
+      .addCase(signOutAsync.fulfilled, (state, action) => {
         state.status = 'idle';
         state.loggedInUser = null;
       });
@@ -88,6 +89,6 @@ export const authSlice = createSlice({
 export const selectLoggedInUser = (state) => state.auth.loggedInUser;
 export const selectError = (state) => state.auth.error;
 
-export const { increment } = authSlice.actions;
+// export const { } = authSlice.actions;
 
 export default authSlice.reducer;

@@ -1,14 +1,18 @@
 import { useEffect } from 'react';
-import { selectLoggedInUser, signoutAsync } from '../AuthSlice';
+import { selectLoggedInUser, signOutAsync } from '../authSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
 
-export default function Logout() {
+function Logout() {
   const dispatch = useDispatch();
   const user = useSelector(selectLoggedInUser);
-  console.log('🚀 ~ Logout ~ user:', user);
+
   useEffect(() => {
-    dispatch(signoutAsync());
-  }, [dispatch, user]);
-  return <>{!user && <Navigate to='/login' replace={true} />}</>;
+    dispatch(signOutAsync());
+  });
+
+  // but useEffect runs after render, so we have to delay navigate part
+  return <>{!user && <Navigate to="/login" replace={true}></Navigate>}</>;
 }
+
+export default Logout;

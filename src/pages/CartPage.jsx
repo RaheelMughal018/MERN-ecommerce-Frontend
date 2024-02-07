@@ -1,10 +1,9 @@
 import Cart from "../features/cart/Cart";
-import NavBar from "../features/navbar/Navbar";
 
-export default function CartPage() {
-  return (
-    <NavBar>
-      <Cart />
-    </NavBar>
-  );
+function CartPage() {
+    return <div>
+        <Cart></Cart>
+    </div>;
 }
+
+export default CartPage;

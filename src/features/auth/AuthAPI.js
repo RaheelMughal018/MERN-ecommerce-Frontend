@@ -5,8 +5,8 @@ export function createUser(userData) {
       body: JSON.stringify(userData),
       headers: { 'content-type': 'application/json' },
     });
-    // TODO: on server we will only include relevant information
     const data = await response.json();
+    // TODO: on server it will only return some info of user (not password)
     resolve({ data });
   });
 }
@@ -17,8 +17,7 @@ export function checkUser(loginInfo) {
     const password = loginInfo.password;
     const response = await fetch('http://localhost:8080/users?email=' + email);
     const data = await response.json();
-    // console.log("🚀 ~ returnnewPromise ~ data:", data)
-
+    console.log({ data });
     if (data.length) {
       if (password === data[0].password) {
         resolve({ data: data[0] });
@@ -28,14 +27,13 @@ export function checkUser(loginInfo) {
     } else {
       reject({ message: 'user not found' });
     }
-
     // TODO: on server it will only return some info of user (not password)
   });
 }
 
-export function signout(id) {
+export function signOut(userId) {
   return new Promise(async (resolve) => {
-    // TODO: on server we will remove session info
-    resolve({ data: 'successufully signout' });
+    // TODO: on server we will remove user session info
+    resolve({ data: 'success' });
   });
 }
